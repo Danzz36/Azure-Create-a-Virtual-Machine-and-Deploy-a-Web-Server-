@@ -65,13 +65,28 @@ The objective of this projcet is to learn how to securely deploy and manage reso
 
 - Create an Ubuntu Server Virtual Machine
   - Navigate back to the resource group and click on Create
-  - Search for Ubuntu Server and click on the most recent version. Then click Create
+  - Search for Ubuntu Server and use the most recent version. I used Ubuntu Server 22.04 LTS. Then click Create
   - Make sure the correct resource group has been selected
   - Give the virtual machine a name. I'll name it VM-USE-Nextcloud
   - We'll leave the default Availability zone as 1. This is becuase if we want to access the Nextcloud server, we'll need a public IP and the public IP needs to be deployed in the same availability zone as the virtual machine
-  - FOr the size of the VM, click see all sizes. 
+  - For the size of the VM, click see all sizes. Ideally you would use a basic machine. Something like B1s which has 1 cpu, 1 gb ram, 2 data disks etc., but it isn't available in my region so I went with a DC1s_v2. Its optimized for confidentiality which is not necessary, but has 1 cpu, 4gb ram and 1 data disk and is the cheapest instance I could find.
+  - SSH Public Key should be selected on the VM configuration. You can use anything you want for the username. Modify the key pair name to be more descriptive. We'll call it VM-USE-Nextcloud_SSHkey
+  - Delect none for public inbound ports. We are going to be connecting to our virtual machine using bastion which is an internal resource
+  - CLick on Next: Disks. We can leave the defualt of 30 GiB on the Premium SSD as is.
+  - CLick on Next: Netoworking. Your virtual netowrk and subnet should aslready be selected. If not, make sure to choose the appropriate networks.
+  - Selec None in the dropdown for Public IP. This is to allow use to learn more later in the process by doing it ourselves.
+  - Click on review + create
+  - Confirm all the settings are coorect and then click create
+  - Click download private key and create resource. This will download the kep pair to your private machine.
+  - Wait for the virtual machine to deploy. It will take a few minutes.
 
 - Install Nextcloud by connecting via SSH using Bastion
+  - Once your VM has been deployed, you can check on it by going back to your resource group. Click on it and take note of it's Private IP. We will need that later.
+  - You will want to start your virtual maching which can be done at the top of the machines details page. Note that if you want to pause the project or end it, make sure to hit the stop button to avoid incurring additional charges.
+  - Now its time to connect to it. Click the connect buton in the top tool bar of the machines details page and then click on bastion. Now click on the Use Bastion button
+  - Now enter the username that you chose earlier and then select SSH private key from local file, and then find and select the SSH key that was downloaded before on your local machine. Then click on connect.
+  - A new tab will open and you will now be connected to your virtual machine using SSH via Bastion
+  - Now let's install Nextcloud by typing 'sudo snap install nextcloud'
 
 - Publish an IP
 
