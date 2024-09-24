@@ -86,12 +86,38 @@ The objective of this projcet is to learn how to securely deploy and manage reso
   - Now its time to connect to it. Click the connect buton in the top tool bar of the machines details page and then click on bastion. Now click on the Use Bastion button
   - Now enter the username that you chose earlier and then select SSH private key from local file, and then find and select the SSH key that was downloaded before on your local machine. Then click on connect.
   - A new tab will open and you will now be connected to your virtual machine using SSH via Bastion
-  - Now let's install Nextcloud by typing 'sudo snap install nextcloud'
+  - Now let's install Nextcloud by typing 'sudo snap install nextcloud' and wait for it to download everything
+  - Next we'll create a simple administrative account with a sample username and password, admin and daniel respectively. You can choose whatever you prefer. It's up to you.
+  - Type 'sudo nextcloud.manual-install admin daniel' It will take a minute, so let it run and finish.
+  - Next we'll create a simple self signed certificate. Type 'sudo nextcloud.enable-https self signed' and then wait until the certificate is generated.
+  - Once done, we can now exit from the SSH connection. Type 'exit' and then close Bastion.
 
 - Publish an IP
+  - Now it's time to access our nextcloud instance on the web. In order to do this, we need to create a public IP and then allow only HTTPS connections
+  - Navigate to the netowrking tab on the left side of the scree in the virtual machine details and click on it. Then click on the netowrk interface card
+  - Click on IP configurations in the left menu. We want to change IP config 1 to add a public address.
+  - Click on the line item and then click on associate under Public IP Address, then click on create new. First give it a name. We'll use VMIP-USE-Nextcloud. Select standard SKU and then click OK
+  - Now save the new configuration
+  - Once it has finished setting it up, navigate back to your virtual machine and then click overview in the left side menu. You will now see a public IP address
+  - If you copy that public IP address and try to open it in a new tab, it wil not work becuase we haven't set up a rule to allow inbound HTTPS traffic in our network security group. WE want to set this up, but only allow traffic from our IP address. We can check and copy our IP address by using www.whatsmyip.com
+  - Go back to azure and click on Networking in the left side menu of the virtual machine and click on add inbound port rule
+  - Select IP addresses on the Source dropdown menu and then paste your IP adress in the source IP addresses/CIDR ranges field
+  - Select IP addresses under the destination drop down menu
+  - Add the virtual machines IP address in the destination IP addresses/CIDR ranges field
+  - Select HTTPS on the service drop down menu
+  - Make sure the Action is set to Allow and name the rule HTTPS_Nextcloud. Click add once done
+  - If you try to navigate to the nextcloud servers IP address now, it will connect. Although your browser may tell you the connection is not secure because the certificate was self signed. You can ignore it by clicking on advanced and then proceed. It should now respond. However, it will tel you that you are accessing through an untrusted domain. What we need to do here is create a DNS entry for our public IP and then set it on Nextcloud
 
 - Create a DNS label
-
+  - Back in the Azure portal, navigate to your network diagram where you can see the visual representation of the resources in your network. You'll see your VMIP-USE-Nextcloud is connected to your virtual machines NIC. Go ahead and click on VMIP-USE-Nextcloud and then click on configuration in the left side menu.
+  - In the DNS name label field, giveit a name. You can use whatever you want. I'll use danielnextcloud. Once you find one that is available, click on save
+  - Navigate back to your virtual machine by clikcing on overview. Then click on your resource group. Then click on your virtual machine. You'll now see a publick IP address and your dns name.
+  - Click on connect at the top of that screen and then click Bastion. Click use Bastion. Login using the same process as before. Use your username, select SSH private key from a local file and then find and select that SSH key file, then click connect
+  - Now communicate your dns label to nextcloud by typing 'sudo nextcloud.occ config:system:set trusted_domains 1 --value=danielnextcloud.eastus.cloudapp.azure.com' Remember your DNS name will be different from mine.
+  - You can now exit the SSH connection by typing exit and then closing Bastion.
+  - Try navigating to the DNS name you just configured in a new tab. Accept the self signed certificate again and you will now be prompted with a nextcloud login page. It's now up and running. You can login with the credentials you set earlier. In my case it was admin, daniel.
+ 
+- Once you are done, log out of the Nextcloud account in your browser and remember to go back into Azure and stop your virtual machine. Also stop your Bastion instnace by deleting it from the resource group to avoid being billed aymore for either unless you plan to continue using them. 
 
 
 drag & drop screenshots here or use imgur and reference them using imgsrc
