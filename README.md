@@ -165,10 +165,3 @@ This project demonstrates competency in Azure cloud infrastructure, virtual netw
 - After finishing, log out of Nextcloud and stop both the virtual machine and the Bastion instance to avoid additional charges.
 
 
-drag & drop screenshots here or use imgur and reference them using imgsrc
-
-Every screenshot should have some text explaining what the screenshot is about.
-
-Example below.
-
-
