@@ -1,4 +1,4 @@
-# Azure: Create a Virtual Machine and Deploy a Web-Server
+# Deploying a Web Server on Azure: Virtual Network and Machine Setup, Network Security, and DNS Configuration
 
 ## Objective
 
